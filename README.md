@@ -72,14 +72,17 @@ JWT_SECRET=your_secure_jwt_secret_key
 
 ### 3. Database Setup
 
-Create the database and tables:
+Create the database and apply the schema:
 
 ```bash
 psql -U postgres -c "CREATE DATABASE box_wms;"
-psql -U postgres -d box_wms -f database-schema.sql
+psql -U postgres -d box_wms -f backend/src/db/schema.sql
+psql -U postgres -d box_wms -f backend/src/db/seed.sql
 ```
 
-(If you have a database-schema.sql file, or create tables using the SQL from your project)
+This will:
+- Create all necessary tables from `schema.sql`
+- Seed initial user data from `seed.sql`
 
 ### 4. Backend Setup
 
