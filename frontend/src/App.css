@@ -1,0 +1,43 @@
+#root {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0;
+  text-align: left;
+  background-color: #f9fafb;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* Responsive Container */
+@media (min-width: 640px) {
+  #root {
+    padding: 0;
+  }
+}
+
+/* Smooth transitions */
+* {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Prevent layout shift on smaller devices */
+@media (max-width: 640px) {
+  body {
+    font-size: 14px;
+  }
+}
+
+/* Touch-friendly sizing */
+@media (hover: none) and (pointer: coarse) {
+  button,
+  input[type="date"],
+  input[type="text"],
+  select {
+    min-height: 44px;
+    font-size: 16px;
+  }
+}
+
