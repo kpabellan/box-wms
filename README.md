@@ -28,6 +28,9 @@ box-wms/
 │   │   │   ├── Login.jsx
 │   │   │   ├── Navbar.jsx
 │   │   │   └── Scan.jsx
+|   |   ├── db/
+|   |   |   ├── schema.sql
+|   |   |   └── seed.sql
 │   │   └── main.jsx
 │   └── package.json
 ├── backend/           # Express backend
