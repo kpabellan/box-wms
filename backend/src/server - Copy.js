@@ -33,38 +33,6 @@ function requireRole(allowedRoles) {
   };
 }
 
-app.post("/api/signup", async (req, res) => {
-  const { username, password, fullName } = req.body;
-  const role = "desktop"; // default role
-  if (!username || !password || !fullName) {
-    return res.status(400).json({ error: "Missing required fields" });
-  }
-
-  try {
-    const passwordHash = await bcrypt.hash(password, 10);
-    const result = await pool.query(
-      `
-      INSERT INTO workers (username, password_hash, full_name, role)
-      VALUES ($1, $2, $3, $4)
-      RETURNING id, username, full_name, role
-      `,
-      [username, passwordHash, fullName, role]
-    );
-
-    const worker = result.rows[0];
-    return res.status(201).json({
-      message: "User created",
-      user: { id: worker.id, username: worker.username, name: worker.full_name, role: worker.role },
-    });
-  } catch (err) {
-    console.error(err);
-    if (err.code === "23505") {
-      return res.status(409).json({ error: "Username already exists" });
-    }
-    return res.sendStatus(500);
-  }
-});
-
 app.post("/api/login", async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) return res.status(400).json({ error: "Missing credentials" });
@@ -318,7 +286,6 @@ app.get("/api/dashboard/day-details", requireAuth, requireRole(["admin", "deskto
   }
 });
 
-// Get current on-hand quantity
 app.get("/api/dashboard/on-hand", requireAuth, requireRole(["admin", "desktop"]), async (req, res) => {
   try {
     const result = await pool.query(
