@@ -33,6 +33,7 @@ export default function Dashboard() {
   const [view, setView] = useState("today");
   const [selectedDate, setSelectedDate] = useState(todayString);
   const [dailyData, setDailyData] = useState([]);
+  const [hourlyData, setHourlyData] = useState([]);
   const [destinationData, setDestinationData] = useState([]);
   const [dayDetails, setDayDetails] = useState([]);
   const [onHand, setOnHand] = useState(0);
@@ -96,6 +97,7 @@ export default function Dashboard() {
       setOnHand(Number(data.onHand) || 0);
     } catch (err) {
       console.error(err);
+      // optional: setError(err.message);
     }
   };
 
@@ -138,6 +140,32 @@ export default function Dashboard() {
     }
   };
 
+  const fetchHourlyData = async (date) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const hourlyResponse = await fetch(`/api/dashboard/hourly?date=${date}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!hourlyResponse.ok) throw new Error("Failed to fetch hourly data");
+      const hourlyResult = await hourlyResponse.json();
+
+      const dayDetailsResponse = await fetch(`/api/dashboard/day-details?date=${date}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!dayDetailsResponse.ok) throw new Error("Failed to fetch day details");
+      const dayDetailsResult = await dayDetailsResponse.json();
+
+      setHourlyData(hourlyResult.data || []);
+      setDayDetails(dayDetailsResult.data || []);
+    } catch (err) {
+      console.error(err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchDailyData(view, selectedDate);
   }, [view, selectedDate, token]);
@@ -162,6 +190,7 @@ export default function Dashboard() {
 
   const chartData = getChartData();
 
+  // Prepare summary stats
   let totalIncoming = 0;
   let totalOutgoing = 0;
 
@@ -209,6 +238,7 @@ export default function Dashboard() {
         </div>
       )}
 
+      {/* View Controls - Responsive */}
       <div style={{
         marginBottom: "24px",
         display: "flex",
@@ -310,6 +340,7 @@ export default function Dashboard() {
 
       {!loading && (
         <>
+          {/* Summary Cards - Responsive Grid */}
           <div style={{
             display: "grid",
             gridTemplateColumns: isMobile ? "1fr" : isTablet ? "repeat(2, 1fr)" : "repeat(4, 1fr)",
@@ -417,12 +448,14 @@ export default function Dashboard() {
             </div>
           </div>
 
+          {/* Charts - Responsive Grid */}
           <div style={{
             display: "grid",
             gridTemplateColumns: isMobile ? "1fr" : isTablet ? "1fr" : "repeat(2, 1fr)",
             gap: isMobile ? "16px" : "24px",
             marginBottom: "24px"
           }}>
+            {/* Bar Chart */}
             <div
               style={{
                 background: "white",
@@ -466,6 +499,7 @@ export default function Dashboard() {
               </ResponsiveContainer>
             </div>
 
+            {/* Destination Pie Chart */}
             <div
               style={{
                 background: "white",
@@ -535,6 +569,7 @@ export default function Dashboard() {
             </div>
           </div>
 
+          {/* Day Details Table - Responsive */}
           {view === "today" && dayDetails.length > 0 && (
             <div
               style={{

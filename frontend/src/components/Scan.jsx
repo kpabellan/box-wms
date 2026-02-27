@@ -1,3 +1,4 @@
+// src/components/ScanScreen.jsx
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Html5Qrcode } from "html5-qrcode";
 
@@ -5,6 +6,7 @@ function detectType(decodedText) {
   const raw = String(decodedText || "").trim();
   if (!raw) return null;
 
+  // JSON format support
   try {
     const obj = JSON.parse(raw);
     if (obj?.app === "msp" && (obj.type === "incoming" || obj.type === "outgoing")) {
@@ -168,6 +170,7 @@ export default function ScanScreen() {
     return () => {
       stopAndClearScanner();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const rescan = async () => {
@@ -245,6 +248,7 @@ export default function ScanScreen() {
         }. Scan next.`
       );
       
+      // Hide success message after 2 seconds
       setTimeout(() => {
         setShowSuccessMessage(false);
       }, 2000);
